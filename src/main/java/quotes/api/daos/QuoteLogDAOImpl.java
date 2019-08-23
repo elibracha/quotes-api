@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import quotes.api.daos.interfaces.QuoteLogDAO;
 import quotes.api.model.QuoteLog;
 import quotes.api.model.enums.Operation;
 import quotes.api.model.enums.StatusCode;
@@ -11,15 +12,15 @@ import quotes.api.repositories.QuoteLogRepository;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class QuoteLogDAO {
+public class QuoteLogDAOImpl implements QuoteLogDAO{
 
 	private QuoteLogRepository quoteLogRepositroy;
 
-	public QuoteLogDAO(QuoteLogRepository quoteLogRepositroy) {
+	public QuoteLogDAOImpl(QuoteLogRepository quoteLogRepositroy) {
 		this.quoteLogRepositroy = quoteLogRepositroy;
 	}
 
-	public void logQuoteErrorRequest(Operation operation, String message) {
+	public void logQuoteErrorToDB(Operation operation, String message) {
 		QuoteLog quoteLog = new QuoteLog();
 
 		quoteLog.setOperation(operation);

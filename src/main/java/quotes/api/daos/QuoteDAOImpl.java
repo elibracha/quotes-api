@@ -5,21 +5,17 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import quotes.api.exceptions.MissMatchItemNameException;
-import quotes.api.model.Item;
+import quotes.api.daos.interfaces.QuoteDAO;
 import quotes.api.model.Quote;
-import quotes.api.repositories.ItemRepository;
 import quotes.api.repositories.QuoteRepository;
 
 @Service
-public class QuoteDAO {
+public class QuoteDAOImpl implements QuoteDAO{
 
 	private QuoteRepository quoteRepository;
-	private ItemRepository itemRepository;
 
-	public QuoteDAO(QuoteRepository quoteRepository, ItemRepository itemRepository) {
+	public QuoteDAOImpl(QuoteRepository quoteRepository) {
 		this.quoteRepository = quoteRepository;
-		this.itemRepository = itemRepository;
 	}
 
 	public List<Quote> getQuotes() {
@@ -27,22 +23,14 @@ public class QuoteDAO {
 	}
 
 	@Transactional
-	public Quote postQuote(Quote quote) throws RuntimeException {
-		if (quote.getItems() != null)
-			for (Item item : quote.getItems()) {
-				if (!itemRepository.existsById(item.getId())) {
-					itemRepository.save(item);
-				} else if (!itemRepository.findById(item.getId()).get().getName().equals(item.getName())) {
-					throw new MissMatchItemNameException();
-
-				}
-		}
-
+	public Quote createQuote(Quote quote) {
 		if (quoteRepository.findDeletedByName(quote.getName()) != null) {
 			Quote recycledQuote = quoteRepository.findDeletedByName(quote.getName());
 			quoteRepository.recycle(recycledQuote.getId());
+			
 			recycledQuote.setItems(quote.getItems());
 			recycledQuote.setPrice(quote.getPrice());
+			
 			return recycledQuote;
 		}
 

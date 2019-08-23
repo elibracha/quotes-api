@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import quotes.api.daos.QuoteLogDAO;
+import quotes.api.daos.QuoteLogDAOImpl;
 import quotes.api.errors.QuoteError;
 import quotes.api.exceptions.MissMatchItemNameException;
 import quotes.api.model.Quote;
@@ -28,9 +28,9 @@ public class QuotesAspect {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuotesAspect.class);
 
-	private QuoteLogDAO logService;
+	private QuoteLogDAOImpl logService;
 
-	public QuotesAspect(QuoteLogDAO logService) {
+	public QuotesAspect(QuoteLogDAOImpl logService) {
 		this.logService = logService;
 	}
 
@@ -59,7 +59,6 @@ public class QuotesAspect {
 	public Object handleExceptionLog(ProceedingJoinPoint proceedingJoinPoint) {
 		try {
 			return ((Quote) proceedingJoinPoint.proceed());
-
 		} catch (Throwable e) {
 			logToFileAndDB(e);
 			return getError(e);
@@ -69,17 +68,17 @@ public class QuotesAspect {
 
 	private void logToFileAndDB(Throwable e) {
 		LOGGER.error(e.getMessage());
-		logService.logQuoteErrorRequest(getOperation(), e.getMessage());
+		logService.logQuoteErrorToDB(getOperation(), e.getMessage());
 	}
 
 	private QuoteError getError(Throwable e) {
 		if (e instanceof DataIntegrityViolationException)
 			return new QuoteError(StatusCode.ERROR.name(), "name is not unique.", StatusCode.ERROR.ordinal());
 		else if (e instanceof MissMatchItemNameException)
-			return new QuoteError(StatusCode.ERROR.name(), "item id exsist but name value is not the same.",
+			return new QuoteError(StatusCode.ERROR.name(), "item id exist but name value is not the same.",
 					StatusCode.ERROR.ordinal());
 		else
-			return new QuoteError(StatusCode.ERROR.name(), "somthing went worrg try again.",
+			return new QuoteError(StatusCode.ERROR.name(), "somthing went worrg try again. (object might not be exist)",
 					StatusCode.ERROR.ordinal());
 	}
 
