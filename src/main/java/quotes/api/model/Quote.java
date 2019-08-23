@@ -15,13 +15,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
-@Where(clause = "deleted = false")
+@Table(name = "quote", uniqueConstraints = @UniqueConstraint(columnNames = { "name" }))
 public class Quote {
 
 	@Id
@@ -33,7 +31,7 @@ public class Quote {
 	@Min(value = 0, message = "price can not be a negative number")
 	private long price;
 	private boolean deleted = false;
-	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, }, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	private List<Item> items;
 
 	public Quote() {

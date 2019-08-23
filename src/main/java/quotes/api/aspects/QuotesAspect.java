@@ -1,93 +1,104 @@
 package quotes.api.aspects;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import quotes.api.daos.QuoteLogDAO;
+import quotes.api.errors.QuoteError;
+import quotes.api.exceptions.MissMatchItemNameException;
 import quotes.api.model.Quote;
-import quotes.api.model.QuoteLog;
 import quotes.api.model.enums.Operation;
-import quotes.api.repositories.QuoteLogRepository;
+import quotes.api.model.enums.StatusCode;
 
 @Aspect
 @Component
 public class QuotesAspect {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuotesAspect.class);
-	private static final int FAILED_CODE = 1;
-	private static final int SUCCESS_CODE = 0;
 
-	private QuoteLogRepository quoteLogRepository;
+	private QuoteLogDAO logService;
 
-	public QuotesAspect(QuoteLogRepository quoteLogRepository) {
-		this.quoteLogRepository = quoteLogRepository;
+	public QuotesAspect(QuoteLogDAO logService) {
+		this.logService = logService;
 	}
 
-	@Pointcut("execution(* quotes.api.controllers.QuotesController.post*(..))")
-	public void post() {
+	@Pointcut("execution(* quotes.api.facades.QuoteFacadeImpl.post*(..))")
+	public void postQuote() {
 	}
 
-	@Pointcut("execution(* quotes.api.controllers.QuotesController.delete*(..))")
-	public void delete() {
+	@Pointcut("execution(* quotes.api.facades.QuoteFacadeImpl.delete*(..))")
+	public void deleteQuote() {
 	}
 
-	@Pointcut("execution(* quotes.api.controllers.QuotesController.update*(..))")
-	public void update() {
+	@Pointcut("execution(* quotes.api.facades.QuoteFacadeImpl.update*(..))")
+	public void updateQuote() {
 	}
 
-	@Around("post() || delete() || update()")
-	public Object logBefore(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+	@Pointcut("execution(* quotes.api.facades.QuoteFacadeImpl.get*(..))")
+	public void getQuote() {
+	}
+
+	@Before("execution(* quotes.api.handlers.QuotesExceptionHandler.handleMethodArgumentNotValid(..))")
+	public void handleVaildationLog(JoinPoint joinPoint) {
+		logToFileAndDB((Throwable) joinPoint.getArgs()[0]);
+	}
+
+	@Around("postQuote() || deleteQuote() || updateQuote()")
+	public Object handleExceptionLog(ProceedingJoinPoint proceedingJoinPoint) {
+		try {
+			return ((Quote) proceedingJoinPoint.proceed());
+
+		} catch (Throwable e) {
+			logToFileAndDB(e);
+			return getError(e);
+		}
+
+	}
+
+	private void logToFileAndDB(Throwable e) {
+		LOGGER.error(e.getMessage());
+		logService.logQuoteErrorRequest(getOperation(), e.getMessage());
+	}
+
+	private QuoteError getError(Throwable e) {
+		if (e instanceof DataIntegrityViolationException)
+			return new QuoteError(StatusCode.ERROR.name(), "name is not unique.", StatusCode.ERROR.ordinal());
+		else if (e instanceof MissMatchItemNameException)
+			return new QuoteError(StatusCode.ERROR.name(), "item id exsist but name value is not the same.",
+					StatusCode.ERROR.ordinal());
+		else
+			return new QuoteError(StatusCode.ERROR.name(), "somthing went worrg try again.",
+					StatusCode.ERROR.ordinal());
+	}
+
+	private Operation getOperation() {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest();
 
-		QuoteLog quoteLog = new QuoteLog();
-		quoteLog.setCreatedDate(new Timestamp(Calendar.getInstance().getTime().getTime()));
-
 		switch (request.getMethod()) {
-			case "POST":
-				quoteLog.setOperation(Operation.CREATE);
-				break;
-			case "PUT":
-				quoteLog.setOperation(Operation.UPDATE);
-				break;
-			case "DELETE":
-				quoteLog.setOperation(Operation.DELETE);
-				break;
+		case "POST":
+			return Operation.CREATE;
+		case "PUT":
+			return Operation.UPDATE;
+		case "DELETE":
+			return Operation.DELETE;
+		case "GET":
+			return Operation.GET;
+		default:
+			return Operation.NOT_SUPPORTED;
 		}
-
-		Object result = null;
-
-		try {
-			result = proceedingJoinPoint.proceed();
-			quoteLog.setQuoteId(request.getMethod().equals("POST") ? 
-					((Quote)((ResponseEntity<Quote>) result).getBody()).getId()
-					: (long) proceedingJoinPoint.getArgs()[0]);
-
-			quoteLog.setErrorCode(SUCCESS_CODE);
-			
-		} catch (Throwable e) {
-			quoteLog.setQuoteId(null);
-			quoteLog.setErrorCode(FAILED_CODE);
-			quoteLog.setMessage(e.getMessage());
-			
-			LOGGER.error(e.toString());
-		} 
-		
-		quoteLogRepository.save(quoteLog);
-		return result;
-
 	}
 
 }

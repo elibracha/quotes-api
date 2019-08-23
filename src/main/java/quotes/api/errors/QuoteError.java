@@ -1,16 +1,16 @@
-package quotes.api.responses;
+package quotes.api.errors;
 
 public class QuoteError {
 
 	private String level;
 	private String description;
-	private String errorCode;
+	private int errorCode;
 
 	public QuoteError() {
 		super();
 	}
 
-	public QuoteError(String level, String description, String errorCode) {
+	public QuoteError(String level, String description, int errorCode) {
 		super();
 		this.level = level;
 		this.description = description;
@@ -33,11 +33,11 @@ public class QuoteError {
 		this.description = description;
 	}
 
-	public String getErrorCode() {
+	public int getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(String errorCode) {
+	public void setErrorCode(int errorCode) {
 		this.errorCode = errorCode;
 	}
 

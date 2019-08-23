@@ -15,6 +15,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import quotes.api.model.enums.Operation;
+import quotes.api.model.enums.StatusCode;
 
 @Entity
 @Table(name = "quote_log")
@@ -32,7 +33,8 @@ public class QuoteLog {
 	@Enumerated(EnumType.STRING)
 	private Operation operation;
 	@Column(name = "error_code")
-	private int errorCode;
+	@Enumerated(EnumType.ORDINAL)
+	private StatusCode errorCode;
 	@Column(length = 9999)
 	private String message;
 
@@ -40,7 +42,7 @@ public class QuoteLog {
 		super();
 	}
 
-	public QuoteLog(Timestamp createdDate, Long quoteId, Operation operation, int errorCode, String message) {
+	public QuoteLog(Timestamp createdDate, Long quoteId, Operation operation, StatusCode errorCode, String message) {
 		super();
 		this.createdDate = createdDate;
 		this.quoteId = quoteId;
@@ -73,11 +75,11 @@ public class QuoteLog {
 		this.operation = operation;
 	}
 
-	public int getErrorCode() {
+	public StatusCode getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(int errorCode) {
+	public void setErrorCode(StatusCode errorCode) {
 		this.errorCode = errorCode;
 	}
 
