@@ -7,21 +7,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @Entity
-@Table(name = "app_user")
+@Table(name = "api_user")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "username")
+	@Column(name = "username", unique = true)
 	private String username;
 
 	@Column(name = "password")
-	@JsonIgnore
 	private String password;
 
 	public Long getId() {

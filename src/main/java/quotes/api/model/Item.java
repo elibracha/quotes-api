@@ -7,17 +7,25 @@ import javax.persistence.Id;
 public class Item {
 
 	@Id
-	private long id;
+	private Long id;
 	private String name;
 
 	public Item() {
 		super();
 	}
 
-	public Item(long id, String name) {
+	public Item(Long id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -26,10 +34,6 @@ public class Item {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public long getId() {
-		return id;
 	}
 
 	@Override

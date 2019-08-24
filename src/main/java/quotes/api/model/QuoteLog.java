@@ -24,7 +24,7 @@ public class QuoteLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "native")
 	@GenericGenerator(name = "native", strategy = "increment")
-	private long id;
+	private Long id;
 	@Column(name = "created_date")
 	@CreationTimestamp
 	private Timestamp createdDate;
@@ -49,6 +49,14 @@ public class QuoteLog {
 		this.operation = operation;
 		this.errorCode = errorCode;
 		this.message = message;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Timestamp getCreatedDate() {
@@ -89,10 +97,6 @@ public class QuoteLog {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public long getId() {
-		return id;
 	}
 
 	@Override

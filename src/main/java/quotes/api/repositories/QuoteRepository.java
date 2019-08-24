@@ -11,17 +11,17 @@ import quotes.api.model.Quote;
 
 public interface QuoteRepository extends JpaRepository<Quote, Long> {
 	@Override
-	@Query("select a from Quote a where a.deleted = 'false'")
+	@Query("select a from Quote a where a.deleted = 0")
 	public List<Quote> findAll();
 
-	@Query("select a from Quote a where a.deleted = 'true' and a.name = :name")
+	@Query("select a from Quote a where a.deleted = 1 and a.name = :name")
 	public Quote findDeletedByName(@Param("name") String name);
 
-	@Query("update Quote a set a.deleted = 'true' where a.id = :id")
+	@Query("update Quote a set a.deleted = 1 where a.id = :id")
 	@Modifying
 	public void softDelete(@Param("id") Long id);
 
-	@Query("update Quote a set a.deleted = 'false' where a.id = :id")
+	@Query("update Quote a set a.deleted = 0 where a.id = :id")
 	@Modifying
 	public void recycle(@Param("id") Long id);
 
