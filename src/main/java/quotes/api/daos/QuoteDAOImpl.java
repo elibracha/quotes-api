@@ -10,7 +10,7 @@ import quotes.api.model.Quote;
 import quotes.api.repositories.QuoteRepository;
 
 @Service
-public class QuoteDAOImpl implements QuoteDAO{
+public class QuoteDAOImpl implements QuoteDAO {
 
 	private QuoteRepository quoteRepository;
 
@@ -27,10 +27,10 @@ public class QuoteDAOImpl implements QuoteDAO{
 		if (quoteRepository.findDeletedByName(quote.getName()) != null) {
 			Quote recycledQuote = quoteRepository.findDeletedByName(quote.getName());
 			quoteRepository.recycle(recycledQuote.getId());
-			
+
 			recycledQuote.setItems(quote.getItems());
 			recycledQuote.setPrice(quote.getPrice());
-			
+
 			return recycledQuote;
 		}
 

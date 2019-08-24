@@ -14,7 +14,7 @@ import quotes.api.model.Quote;
 public class QuoteFacadeImpl implements QuoteFacade {
 	private QuoteDAO quoteDAO;
 	private ItemDAO itemDAO;
-	
+
 	public QuoteFacadeImpl(QuoteDAO quoteDAO, ItemDAO itemDAO) {
 		this.quoteDAO = quoteDAO;
 		this.itemDAO = itemDAO;

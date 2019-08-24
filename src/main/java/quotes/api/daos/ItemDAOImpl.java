@@ -26,8 +26,8 @@ public class ItemDAOImpl implements ItemDAO {
 				if (!itemRepository.existsById(item.getId())) {
 					itemRepository.save(item);
 				} else if (!itemRepository.findById(item.getId()).get().getName().equals(item.getName())) {
-				throw new MissMatchItemNameException();
+					throw new MissMatchItemNameException();
+				}
 			}
-		}
 	}
 }

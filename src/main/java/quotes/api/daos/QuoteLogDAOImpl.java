@@ -12,7 +12,7 @@ import quotes.api.repositories.QuoteLogRepository;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public class QuoteLogDAOImpl implements QuoteLogDAO{
+public class QuoteLogDAOImpl implements QuoteLogDAO {
 
 	private QuoteLogRepository quoteLogRepositroy;
 
