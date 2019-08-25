@@ -16,7 +16,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import quotes.api.daos.QuoteLogDAOImpl;
 import quotes.api.model.enums.Operation;
 
-
 @Aspect
 @Component
 public class QuotesAspect {
@@ -48,7 +47,7 @@ public class QuotesAspect {
 
 	@AfterThrowing(pointcut = "postQuote() || deleteQuote() || updateQuote()", throwing = "ex")
 	public void handleExceptionLog(JoinPoint joinPoint, Throwable ex) {
-			logToFileAndDB(ex);
+		logToFileAndDB(ex);
 	}
 
 	private void logToFileAndDB(Throwable e) {

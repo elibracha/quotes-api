@@ -23,6 +23,10 @@ public class QuoteService {
 		return quoteDAO.getQuotes();
 	}
 
+	public Quote getQuote(long id) {
+		return quoteDAO.getQuote(id);
+	}
+
 	public Quote postQuote(Quote quote) {
 		itemDAO.createItems(quote.getItems());
 		return quoteDAO.createQuote(quote);

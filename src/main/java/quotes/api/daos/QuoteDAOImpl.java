@@ -22,6 +22,10 @@ public class QuoteDAOImpl implements QuoteDAO {
 		return quoteRepository.findAll();
 	}
 
+	public Quote getQuote(long id) {
+		return quoteRepository.findById(id).get();
+	}
+
 	@Transactional
 	public Quote createQuote(Quote quote) {
 		if (quoteRepository.findDeletedByName(quote.getName()) != null) {

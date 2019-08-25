@@ -12,5 +12,7 @@ public interface QuoteDAO {
 
 	public void deleteQuote(Long id);
 
+	public Quote getQuote(long id);
+
 	public List<Quote> getQuotes();
 }
