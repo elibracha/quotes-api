@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import quotes.api.services.ApiUserDetailsService;
+import quotes.api.services.UserService;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 	@Autowired
-	private ApiUserDetailsService apiUserDetailsService;
+	private UserService apiUserDetailsService;
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 

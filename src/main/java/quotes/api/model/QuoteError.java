@@ -1,4 +1,4 @@
-package quotes.api.errors;
+package quotes.api.model;
 
 public class QuoteError {
 

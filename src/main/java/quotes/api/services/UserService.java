@@ -13,7 +13,7 @@ import quotes.api.model.User;
 import quotes.api.repositories.UserRepository;
 
 @Component
-public class ApiUserDetailsService implements UserDetailsService {
+public class UserService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;

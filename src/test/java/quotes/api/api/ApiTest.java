@@ -8,8 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import quotes.api.errors.QuoteError;
 import quotes.api.model.Quote;
+import quotes.api.model.QuoteError;
 
 public class ApiTest extends AbstractTest {
 

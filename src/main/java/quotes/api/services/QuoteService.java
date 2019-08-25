@@ -1,4 +1,4 @@
-package quotes.api.facades;
+package quotes.api.services;
 
 import java.util.List;
 
@@ -7,15 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import quotes.api.daos.interfaces.ItemDAO;
 import quotes.api.daos.interfaces.QuoteDAO;
-import quotes.api.facades.interfaces.QuoteFacade;
 import quotes.api.model.Quote;
 
 @Service
-public class QuoteFacadeImpl implements QuoteFacade {
+public class QuoteService {
 	private QuoteDAO quoteDAO;
 	private ItemDAO itemDAO;
 
-	public QuoteFacadeImpl(QuoteDAO quoteDAO, ItemDAO itemDAO) {
+	public QuoteService(QuoteDAO quoteDAO, ItemDAO itemDAO) {
 		this.quoteDAO = quoteDAO;
 		this.itemDAO = itemDAO;
 	}
@@ -24,12 +23,12 @@ public class QuoteFacadeImpl implements QuoteFacade {
 		return quoteDAO.getQuotes();
 	}
 
-	public Object postQuote(Quote quote) {
+	public Quote postQuote(Quote quote) {
 		itemDAO.createItems(quote.getItems());
 		return quoteDAO.createQuote(quote);
 	}
 
-	public Object updateQuote(long id, Quote quote) {
+	public Quote updateQuote(long id, Quote quote) {
 		itemDAO.createItems(quote.getItems());
 		return quoteDAO.updateQuote(id, quote);
 	}
